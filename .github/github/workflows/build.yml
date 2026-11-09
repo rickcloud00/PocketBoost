@@ -1,0 +1,33 @@
+
+name: Build PocketBoost 1.1
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '8'
+
+      - name: Preparar projeto
+        run: |
+          unzip -q PocketBoost-1.1.0-Fonte.zip -d source
+          wget -q https://services.gradle.org/distributions/gradle-4.9-bin.zip
+          unzip -q gradle-4.9-bin.zip
+
+      - name: Compilar mod
+        run: |
+          cd source
+          ../gradle-4.9/bin/gradle clean build --no-daemon
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: PocketBoost-1.1.0
+          path: source/build/libs/*.jar
